@@ -10,7 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "project")
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,5 +31,6 @@ public class ProjectEntity {
     @Builder.Default
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JoinColumn(name = "project_id", referencedColumnName = "id")
     List<TaskStateEntity> taskStates = new ArrayList<>();
 }

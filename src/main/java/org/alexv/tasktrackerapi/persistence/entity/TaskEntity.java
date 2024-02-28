@@ -8,7 +8,8 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "task")
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor

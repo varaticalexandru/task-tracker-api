@@ -10,7 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "task_state")
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,9 +28,10 @@ public class TaskStateEntity {
 
     Instant createdAt = Instant.now();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JoinColumn(name = "task_state_id", referencedColumnName = "id")
     List<TaskEntity> tasks = new ArrayList<>();
 }
