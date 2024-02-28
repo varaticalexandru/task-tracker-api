@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+echo "####### LOADING ENV VARS #######"
+
+# Read each line in .env file
+while IFS='=' read -r key value
+do
+    # Remove leading and trailing whitespaces
+    key=$(echo $key | xargs)
+    value=$(echo $value | xargs)
+
+    # Skip empty lines and lines starting with #
+    if [[ -n $key && $key != \#* ]]; then
+        export "$key=$value"
+        echo "$key=$value"
+    fi
+done < .env
+
+echo "####### DONE LOADING ENV VARS #######"

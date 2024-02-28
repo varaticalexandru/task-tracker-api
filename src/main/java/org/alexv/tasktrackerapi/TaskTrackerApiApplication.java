@@ -8,11 +8,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TaskTrackerApiApplication {
 
     public static void main(String[] args) {
-        setEnvVars();
+        laodEnvVars();
         SpringApplication.run(TaskTrackerApiApplication.class, args);
     }
 
-    public static void setEnvVars() {
+    public static void laodEnvVars() {
         Dotenv dotenv = Dotenv.load();
         dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
     }
