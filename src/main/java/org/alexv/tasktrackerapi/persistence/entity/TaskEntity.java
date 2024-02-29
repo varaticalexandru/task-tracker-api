@@ -25,4 +25,7 @@ public class TaskEntity {
 
     @Builder.Default
     Instant createdAt = Instant.now();
+
+    @Builder.Default
+    Instant updatedAt = Instant.now();
 }

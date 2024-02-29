@@ -27,6 +27,9 @@ public class ProjectEntity {
     @Builder.Default
     Instant createdAt = Instant.now();
 
+    @Builder.Default
+    Instant updatedAt = Instant.now();
+
     @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
     @EqualsAndHashCode.Exclude

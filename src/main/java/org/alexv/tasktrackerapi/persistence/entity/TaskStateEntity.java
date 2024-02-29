@@ -26,7 +26,11 @@ public class TaskStateEntity {
 
     Integer ordinal;
 
+    @Builder.Default
     Instant createdAt = Instant.now();
+
+    @Builder.Default
+    Instant updatedAt = Instant.now();
 
     @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
