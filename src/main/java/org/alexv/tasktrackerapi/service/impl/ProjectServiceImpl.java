@@ -12,6 +12,7 @@ import org.alexv.tasktrackerapi.api.exception.NotFoundException;
 import org.alexv.tasktrackerapi.mapper.Mapper;
 import org.alexv.tasktrackerapi.persistence.entity.ProjectEntity;
 import org.alexv.tasktrackerapi.persistence.repository.ProjectRepository;
+import org.alexv.tasktrackerapi.service.ProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Transactional
-public class ProjectService {
+public class ProjectServiceImpl implements ProjectService {
 
     final ProjectRepository projectRepository;
     final Mapper<ProjectEntity, ProjectDto> projectMapper;
