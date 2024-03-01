@@ -23,9 +23,17 @@ public class TaskEntity {
 
     String description;
 
-    @Builder.Default
-    Instant createdAt = Instant.now();
+    Instant createdAt;
 
-    @Builder.Default
-    Instant updatedAt = Instant.now();
+    Instant updatedAt;
+
+    @PrePersist
+    private void onCreate() {
+        updatedAt = createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        updatedAt = Instant.now();
+    }
 }

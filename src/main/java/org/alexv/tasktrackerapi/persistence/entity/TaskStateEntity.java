@@ -26,10 +26,8 @@ public class TaskStateEntity {
 
     Integer ordinal;
 
-    @Builder.Default
     Instant createdAt = Instant.now();
 
-    @Builder.Default
     Instant updatedAt = Instant.now();
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -38,4 +36,14 @@ public class TaskStateEntity {
     @ToString.Exclude
     @JoinColumn(name = "task_state_id", referencedColumnName = "id")
     List<TaskEntity> tasks = new ArrayList<>();
+
+    @PrePersist
+    private void onCreate() {
+        updatedAt = createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        updatedAt = Instant.now();
+    }
 }

@@ -24,10 +24,8 @@ public class ProjectEntity {
     @Column(unique = true)
     String name;
 
-    @Builder.Default
     Instant createdAt = Instant.now();
 
-    @Builder.Default
     Instant updatedAt = Instant.now();
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -36,4 +34,14 @@ public class ProjectEntity {
     @ToString.Exclude
     @JoinColumn(name = "project_id", referencedColumnName = "id")
     List<TaskStateEntity> taskStates = new ArrayList<>();
+
+    @PrePersist
+    private void onCreate() {
+        updatedAt = createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        updatedAt = Instant.now();
+    }
 }

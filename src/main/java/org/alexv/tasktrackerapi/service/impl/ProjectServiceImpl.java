@@ -44,7 +44,11 @@ public class ProjectServiceImpl implements ProjectService {
                     throw new BadRequestException(String.format("Project \"%s\" already exists.", name));
                 });
 
-        ProjectEntity savedProject = projectRepository.saveAndFlush(ProjectEntity.builder().name(name).build());
+        ProjectEntity savedProject = projectRepository.saveAndFlush(
+                ProjectEntity
+                        .builder()
+                        .name(name)
+                        .build());
 
         return projectMapper.mapTo(savedProject);
     }

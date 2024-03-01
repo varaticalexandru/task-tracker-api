@@ -16,12 +16,10 @@ public class ProjectDto {
 
     String name;
 
-    @Builder.Default
     @JsonProperty("created_at")
-    Instant createdAt = Instant.now();
+    Instant createdAt;
 
-    @Builder.Default
     @JsonProperty("updated_at")
-    Instant updatedAt = Instant.now();
+    Instant updatedAt;
 
 }
