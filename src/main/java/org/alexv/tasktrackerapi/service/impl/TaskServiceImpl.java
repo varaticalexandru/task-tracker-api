@@ -9,9 +9,9 @@ import org.alexv.tasktrackerapi.service.TaskService;
 import org.springframework.stereotype.Service;
 
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Transactional
 public class TaskServiceImpl implements TaskService {
-    final TaskRepository taskRepository;
+    TaskRepository taskRepository;
 }

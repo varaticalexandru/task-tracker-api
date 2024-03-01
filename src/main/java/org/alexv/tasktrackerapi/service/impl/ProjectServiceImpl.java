@@ -21,13 +21,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Transactional
 public class ProjectServiceImpl implements ProjectService {
 
-    final ProjectRepository projectRepository;
-    final Mapper<ProjectEntity, ProjectDto> projectMapper;
+    ProjectRepository projectRepository;
+    Mapper<ProjectEntity, ProjectDto> projectMapper;
 
     private ProjectEntity getProjectOrThrow(Long projectId) {
         return projectRepository.findById(projectId)

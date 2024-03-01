@@ -13,10 +13,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TaskStateMapper implements Mapper<TaskStateEntity, TaskStateDto> {
 
-    final ModelMapper modelMapper;
+    ModelMapper modelMapper;
 
     @Override
     public TaskStateDto mapTo(TaskStateEntity taskStateEntity) {

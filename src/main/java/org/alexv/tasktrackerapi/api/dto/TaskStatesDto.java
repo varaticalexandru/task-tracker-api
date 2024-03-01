@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectsDto {
-    @JsonProperty("projects")
-    List<ProjectDto> projects;
+public class TaskStatesDto {
+    @JsonProperty("task_states")
+    List<TaskStateDto> taskStates;
 }

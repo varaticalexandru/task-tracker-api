@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.util.List;
 
 
 @Data
@@ -25,4 +26,7 @@ public class TaskStateDto {
 
     @JsonProperty("updated_at")
     Instant updatedAt;
+
+    @JsonProperty("tasks")
+    List<TaskDto> tasks;
 }

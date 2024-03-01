@@ -13,10 +13,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProjectMapper implements Mapper<ProjectEntity, ProjectDto> {
 
-    final ModelMapper modelMapper;
+    ModelMapper modelMapper;
 
     @Override
     public ProjectDto mapTo(ProjectEntity projectEntity) {

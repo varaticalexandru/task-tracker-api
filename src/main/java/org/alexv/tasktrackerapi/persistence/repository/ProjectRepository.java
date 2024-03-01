@@ -13,8 +13,6 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
     Optional<ProjectEntity> findByName(String name);
 
-    Optional<ProjectEntity> findById(Long id);
-
     Stream<ProjectEntity> streamAllBy();
 
     Stream<ProjectEntity> streamAllByNameIsContainingIgnoreCase(String name);
