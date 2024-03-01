@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.alexv.tasktrackerapi.api.dto.AckDto;
 import org.alexv.tasktrackerapi.api.dto.ProjectDto;
 import org.alexv.tasktrackerapi.api.dto.ProjectsDto;
+import org.alexv.tasktrackerapi.service.ProjectService;
 import org.alexv.tasktrackerapi.service.impl.ProjectServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProjectController {
 
-    final ProjectServiceImpl projectService;
+    final ProjectService projectService;
 
     public static final String CREATE_PROJECT = "/api/projects";
     public static final String UPDATE_PROJECT = "/api/projects/{project_id}";
