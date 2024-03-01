@@ -82,7 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectStream = searchTerm
                 .map(projectRepository::streamAllByNameIsContainingIgnoreCase)
-                .orElseGet(projectRepository::streamAll);
+                .orElseGet(projectRepository::streamAllBy);
 
         List<ProjectDto> projects = projectStream
                 .map(projectMapper::mapTo)

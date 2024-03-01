@@ -15,8 +15,7 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
     Optional<ProjectEntity> findById(Long id);
 
-    @Query("SELECT p FROM ProjectEntity p")
-    Stream<ProjectEntity> streamAll();
+    Stream<ProjectEntity> streamAllBy();
 
     Stream<ProjectEntity> streamAllByNameIsContainingIgnoreCase(String name);
 }
