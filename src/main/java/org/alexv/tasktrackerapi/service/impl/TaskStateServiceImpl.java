@@ -4,15 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.alexv.tasktrackerapi.api.dto.ProjectDto;
-import org.alexv.tasktrackerapi.api.dto.ProjectsDto;
 import org.alexv.tasktrackerapi.api.dto.TaskStateDto;
 import org.alexv.tasktrackerapi.api.dto.TaskStatesDto;
+import org.alexv.tasktrackerapi.api.exception.BadRequestException;
 import org.alexv.tasktrackerapi.mapper.Mapper;
-import org.alexv.tasktrackerapi.mapper.impl.TaskStateMapper;
 import org.alexv.tasktrackerapi.persistence.entity.ProjectEntity;
 import org.alexv.tasktrackerapi.persistence.entity.TaskStateEntity;
 import org.alexv.tasktrackerapi.persistence.repository.TaskStateRepository;
+import org.alexv.tasktrackerapi.service.ProjectService;
 import org.alexv.tasktrackerapi.service.TaskStateService;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +27,7 @@ public class TaskStateServiceImpl implements TaskStateService {
 
     TaskStateRepository taskStateRepository;
     Mapper<TaskStateEntity, TaskStateDto> taskStateMapper;
+    ProjectService projectService;
 
     @Override
     public TaskStatesDto fetchTaskStates(Optional<String> searchTerm) {
@@ -47,5 +47,45 @@ public class TaskStateServiceImpl implements TaskStateService {
         return TaskStatesDto.builder()
                 .taskStates(taskStates)
                 .build();
+    }
+
+    @Override
+    public TaskStateDto createTaskState(Long projectId, String name) {
+
+        if (name.trim().isEmpty())
+            throw new BadRequestException("Project name can't be empty.");
+
+        ProjectEntity existingProject = projectService.getProjectOrThrow(projectId);
+
+        existingProject.getTaskStates()
+                .stream()
+                .map(TaskStateEntity::getName)
+                .filter(taskStateName -> taskStateName.equalsIgnoreCase(name))
+                .findAny()
+                .ifPresent(s -> {
+                    throw new BadRequestException(String.format("Task state \"%s\" already exists.", name));
+                });
+
+        TaskStateEntity newTaskState = taskStateRepository.saveAndFlush(
+                TaskStateEntity
+                        .builder()
+                        .name(name)
+                        .project(existingProject)
+                        .build()
+        );
+
+        taskStateRepository
+                .findTaskStateEntityByRightTaskStateIsNullAndProjectIdAndIdIsNot(projectId, newTaskState.getId())
+                .filter(taskState -> !taskState.getId().equals(newTaskState.getId()))
+                .ifPresent(lastTaskState -> {
+                    newTaskState.setLeftTaskState(lastTaskState);
+                    lastTaskState.setRightTaskState(newTaskState);
+
+                    taskStateRepository.saveAndFlush(lastTaskState);
+                });
+
+        final TaskStateEntity savedTaskState = taskStateRepository.saveAndFlush(newTaskState);
+
+        return taskStateMapper.mapTo(savedTaskState);
     }
 }

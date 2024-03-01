@@ -1,24 +1,24 @@
 package org.alexv.tasktrackerapi.api.controller;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.alexv.tasktrackerapi.api.dto.ProjectsDto;
+import lombok.experimental.FieldDefaults;
+import org.alexv.tasktrackerapi.api.dto.TaskStateDto;
 import org.alexv.tasktrackerapi.api.dto.TaskStatesDto;
 import org.alexv.tasktrackerapi.service.TaskStateService;
-import org.alexv.tasktrackerapi.service.impl.TaskStateServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/task-states")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TaskStateController {
-    final TaskStateService taskStateService;
+
+    TaskStateService taskStateService;
 
     public static final String CREATE_TASK_STATE = "/api/projects/{project_id}/task_states";
     public static final String UPDATE_TASK_STATE = "/api/projects/{project_id}/task_states/{task_state_id}";
@@ -32,6 +32,14 @@ public class TaskStateController {
     ) {
 
         return new ResponseEntity<>(taskStateService.fetchTaskStates(searchTerm), HttpStatus.OK);
+    }
+
+    @PostMapping(CREATE_TASK_STATE)
+    public ResponseEntity<TaskStateDto> createTaskState(
+            @PathVariable("project_id") Long project_id,
+            @RequestParam("name") String name
+    ) {
+        return new ResponseEntity<>(taskStateService.createTaskState(project_id, name), HttpStatus.OK);
     }
 
 }

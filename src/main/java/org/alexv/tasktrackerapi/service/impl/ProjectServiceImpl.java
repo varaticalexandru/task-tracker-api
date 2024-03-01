@@ -29,7 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectRepository projectRepository;
     Mapper<ProjectEntity, ProjectDto> projectMapper;
 
-    private ProjectEntity getProjectOrThrow(Long projectId) {
+    public ProjectEntity getProjectOrThrow(Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException(String.format("Project with id \"%s\" doesn't exist.", projectId)));
     }

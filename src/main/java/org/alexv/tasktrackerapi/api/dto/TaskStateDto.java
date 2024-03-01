@@ -15,11 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskStateDto {
+
     Long id;
 
     String name;
 
-    Integer ordinal;
+    @JsonProperty("left_task_state_id")
+    Long leftTaskStateId;
+
+    @JsonProperty("right_task_state_id")
+    Long rightTaskStateId;
 
     @JsonProperty("created_at")
     Instant createdAt;

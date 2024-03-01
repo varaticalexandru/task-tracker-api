@@ -24,9 +24,9 @@ public class ProjectEntity {
     @Column(unique = true)
     String name;
 
-    Instant createdAt = Instant.now();
+    Instant createdAt;
 
-    Instant updatedAt = Instant.now();
+    Instant updatedAt;
 
     @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default

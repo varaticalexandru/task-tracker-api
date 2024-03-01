@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "task_state")
@@ -24,11 +25,18 @@ public class TaskStateEntity {
     @Column(unique = true)
     String name;
 
-    Integer ordinal;
+    @OneToOne
+    TaskStateEntity leftTaskState;
 
-    Instant createdAt = Instant.now();
+    @OneToOne
+    TaskStateEntity rightTaskState;
 
-    Instant updatedAt = Instant.now();
+    Instant createdAt;
+
+    Instant updatedAt;
+
+    @ManyToOne
+    ProjectEntity project;
 
     @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
@@ -45,5 +53,13 @@ public class TaskStateEntity {
     @PreUpdate
     private void onUpdate() {
         updatedAt = Instant.now();
+    }
+
+    public Optional<TaskStateEntity> getLeftTaskState() {
+        return Optional.ofNullable(leftTaskState);
+    }
+
+    public Optional<TaskStateEntity> getRightTaskState() {
+        return Optional.ofNullable(rightTaskState);
     }
 }

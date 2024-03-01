@@ -8,12 +8,13 @@ CREATE TABLE project
 
 CREATE TABLE task_state
 (
-    id         BIGSERIAL PRIMARY KEY NOT NULL,
-    name       VARCHAR(40),
-    ordinal    integer,
-    project_id BIGSERIAL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    id                  BIGSERIAL PRIMARY KEY NOT NULL,
+    name                VARCHAR(40),
+    project_id          BIGSERIAL,
+    left_task_state_id  BIGINT,
+    right_task_state_id BIGINT,
+    created_at          TIMESTAMP,
+    updated_at          TIMESTAMP,
 
     CONSTRAINT fk_project
         FOREIGN KEY (project_id)
@@ -27,7 +28,7 @@ CREATE TABLE task
     description   VARCHAR(512),
     task_state_id BIGSERIAL,
     created_at    TIMESTAMP,
-    updated_at TIMESTAMP,
+    updated_at    TIMESTAMP,
 
     CONSTRAINT fk_task_state
         FOREIGN KEY (task_state_id)

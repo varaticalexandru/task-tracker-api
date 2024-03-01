@@ -13,6 +13,7 @@ spring:
     jpa:
         hibernate:
             ddl-auto: validate
+        show-sql: off
 springdoc:
     api-docs:
         path: /api-docs
