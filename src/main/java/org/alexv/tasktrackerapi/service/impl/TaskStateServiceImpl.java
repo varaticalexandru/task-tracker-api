@@ -101,13 +101,13 @@ public class TaskStateServiceImpl implements TaskStateService {
         ProjectEntity project = existingTaskState.getProject();
 
         taskStateRepository.findTaskStateEntityByNameIgnoreCaseAndProjectIdAndIdIsNot(
-                name,
-                project.getId(),
-                taskStateId
-        )
-                        .ifPresent(taskState -> {
-                            throw new BadRequestException(String.format("Task state \"%s\" already exists.", name));
-                        });
+                        name,
+                        project.getId(),
+                        taskStateId
+                )
+                .ifPresent(taskState -> {
+                    throw new BadRequestException(String.format("Task state \"%s\" already exists.", name));
+                });
 
         existingTaskState.setName(name);
 
@@ -117,9 +117,35 @@ public class TaskStateServiceImpl implements TaskStateService {
     }
 
     @Override
+    public TaskStateDto changeTaskStatePosition(Long taskStateId, Optional<Long> leftTaskStateId) {
+
+        TaskStateEntity moveableTaskState = getTaskStateOrThrowException(taskStateId);
+
+        Optional<TaskStateEntity> leftTaskState = leftTaskStateId
+                .map(this::getTaskStateOrThrowException);
+
+        boolean setFirst = leftTaskState.isEmpty();
+
+        leftTaskState
+                .filter(left -> !areTaskStatesInSameProject(left, moveableTaskState))
+                .ifPresent(left -> {
+                    throw new BadRequestException(String.format("Task States with ids: \"%s\" and \"%s\" are in different projects.", taskStateId, left.getId()));
+                });
+
+        // TODO: finish
+        return TaskStateDto.builder().build();
+    }
+
+
+    @Override
     public TaskStateEntity getTaskStateOrThrowException(Long taskStateId) {
         return taskStateRepository.findById(taskStateId)
                 .orElseThrow(() -> new BadRequestException(String.format("Task State with id \"%s\" doesn't exist.", taskStateId)));
 
+    }
+
+    @Override
+    public boolean areTaskStatesInSameProject(TaskStateEntity taskState1, TaskStateEntity taskState2) {
+        return taskState1.getProject().getId().equals(taskState2.getProject().getId());
     }
 }

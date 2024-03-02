@@ -50,4 +50,12 @@ public class TaskStateController {
         return new ResponseEntity<>(taskStateService.updateTaskState(taskStateId, name), HttpStatus.OK);
     }
 
+    @PatchMapping(CHANGE_TASK_STATE_POSITION)
+    public ResponseEntity<TaskStateDto> changeTaskStatePosition(
+            @PathVariable("task_state_id") Long taskStateId,
+            @RequestParam("left_task_state") Optional<Long> leftTaskStateId
+    ) {
+        return new ResponseEntity<>(taskStateService.changeTaskStatePosition(taskStateId, leftTaskStateId), HttpStatus.OK);
+    }
+
 }

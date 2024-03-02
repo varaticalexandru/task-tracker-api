@@ -8,10 +8,9 @@ import java.util.Optional;
 
 public interface TaskStateService {
     TaskStatesDto fetchTaskStates(Optional<String> searchTerm, Long projectId);
-
     TaskStateDto createTaskState(Long projectId, String name);
-
     TaskStateDto updateTaskState(Long taskStateId, String name);
-
     TaskStateEntity getTaskStateOrThrowException(Long taskStateId);
+    TaskStateDto changeTaskStatePosition(Long taskStateId, Optional<Long> leftTaskStateId);
+    boolean areTaskStatesInSameProject(TaskStateEntity taskStateId1, TaskStateEntity taskStateId2);
 }
