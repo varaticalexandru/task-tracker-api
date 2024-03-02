@@ -100,13 +100,14 @@ public class TaskStateServiceImpl implements TaskStateService {
 
         ProjectEntity project = existingTaskState.getProject();
 
-        project.getTaskStates()
-                .stream()
-                .filter(anotherTaskState -> anotherTaskState.getName().equalsIgnoreCase(name) && !anotherTaskState.getId().equals(taskStateId))
-                .findAny()
-                .ifPresent(it -> {
-                    throw new BadRequestException(String.format("Task state \"%s\" already exists.", name));
-                });
+        taskStateRepository.findTaskStateEntityByNameIgnoreCaseAndProjectIdAndIdIsNot(
+                name,
+                project.getId(),
+                taskStateId
+        )
+                        .ifPresent(taskState -> {
+                            throw new BadRequestException(String.format("Task state \"%s\" already exists.", name));
+                        });
 
         existingTaskState.setName(name);
 
