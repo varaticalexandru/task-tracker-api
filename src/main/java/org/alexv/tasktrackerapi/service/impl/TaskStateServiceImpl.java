@@ -30,15 +30,17 @@ public class TaskStateServiceImpl implements TaskStateService {
     ProjectService projectService;
 
     @Override
-    public TaskStatesDto fetchTaskStates(Optional<String> searchTerm) {
+    public TaskStatesDto fetchTaskStates(Optional<String> searchTerm, Long projectId) {
+
+        projectService.getProjectOrThrow(projectId);
 
         searchTerm = searchTerm.filter(name -> !name.trim().isEmpty());
 
         Stream<TaskStateEntity> taskStateStream;
 
         taskStateStream = searchTerm
-                .map(taskStateRepository::streamAllByNameIsContainingIgnoreCase)
-                .orElseGet(taskStateRepository::streamAllBy);
+                .map(s -> taskStateRepository.streamAllByNameIsContainingIgnoreCaseAndProjectIdIs(s, projectId))
+                .orElseGet(() -> taskStateRepository.streamAllByProjectIdIs(projectId));
 
         List<TaskStateDto> taskStates = taskStateStream
                 .map(taskStateMapper::mapTo)
@@ -76,7 +78,6 @@ public class TaskStateServiceImpl implements TaskStateService {
 
         taskStateRepository
                 .findTaskStateEntityByRightTaskStateIsNullAndProjectIdAndIdIsNot(projectId, newTaskState.getId())
-                .filter(taskState -> !taskState.getId().equals(newTaskState.getId()))
                 .ifPresent(lastTaskState -> {
                     newTaskState.setLeftTaskState(lastTaskState);
                     lastTaskState.setRightTaskState(newTaskState);

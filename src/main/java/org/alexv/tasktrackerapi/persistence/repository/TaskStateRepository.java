@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 @Repository
 public interface TaskStateRepository extends JpaRepository<TaskStateEntity, Long> {
     Optional<TaskStateEntity> findByName(String name);
-    Stream<TaskStateEntity> streamAllBy();
-    Stream<TaskStateEntity> streamAllByNameIsContainingIgnoreCase(String name);
+    Stream<TaskStateEntity> streamAllByProjectIdIs(Long projectId);
+    Stream<TaskStateEntity> streamAllByNameIsContainingIgnoreCaseAndProjectIdIs(String name, Long projectId);
     Optional<TaskStateEntity> findTaskStateEntityByRightTaskStateIsNullAndProjectIdAndIdIsNot(Long projectId, Long notTaskStateId);
 }
