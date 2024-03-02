@@ -49,7 +49,6 @@ public class TaskStateEntity {
     private void onCreate() {
         updatedAt = createdAt = Instant.now();
     }
-
     @PreUpdate
     private void onUpdate() {
         updatedAt = Instant.now();

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/task-states")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TaskStateController {
@@ -21,9 +20,9 @@ public class TaskStateController {
     TaskStateService taskStateService;
 
     public static final String CREATE_TASK_STATE = "/api/projects/{project_id}/task_states";
-    public static final String UPDATE_TASK_STATE = "/api/projects/{project_id}/task_states/{task_state_id}";
-    public static final String CREATE_OR_UPDATE_TASK_STATE = "/api/projects/{project_id}/task_states";
+    public static final String UPDATE_TASK_STATE = "/api/task_states/{task_state_id}";
     public static final String FETCH_TASK_STATES = "/api/projects/{project_id}/task_states";
+    public static final String CHANGE_TASK_STATE_POSITION = "api/task_states/{task_state_id}";
     public static final String DELETE_TASK_STATE = "/api/projects/{project_id}/task_states/{task_state_id}";
 
     @GetMapping(FETCH_TASK_STATES)
@@ -37,10 +36,18 @@ public class TaskStateController {
 
     @PostMapping(CREATE_TASK_STATE)
     public ResponseEntity<TaskStateDto> createTaskState(
-            @PathVariable("project_id") Long project_id,
+            @PathVariable("project_id") Long projectId,
             @RequestParam("name") String name
     ) {
-        return new ResponseEntity<>(taskStateService.createTaskState(project_id, name), HttpStatus.OK);
+        return new ResponseEntity<>(taskStateService.createTaskState(projectId, name), HttpStatus.OK);
+    }
+
+    @PatchMapping(UPDATE_TASK_STATE)
+    public ResponseEntity<TaskStateDto> updateTaskState(
+            @PathVariable("task_state_id") Long taskStateId,
+            @RequestParam("name") String name
+    ) {
+        return new ResponseEntity<>(taskStateService.updateTaskState(taskStateId, name), HttpStatus.OK);
     }
 
 }

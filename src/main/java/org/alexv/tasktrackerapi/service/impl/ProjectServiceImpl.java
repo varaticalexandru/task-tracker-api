@@ -29,7 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectRepository projectRepository;
     Mapper<ProjectEntity, ProjectDto> projectMapper;
 
-    public ProjectEntity getProjectOrThrow(Long projectId) {
+    public ProjectEntity getProjectOrThrowException(Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException(String.format("Project with id \"%s\" doesn't exist.", projectId)));
     }
@@ -58,7 +58,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (name.trim().isEmpty())
             throw new BadRequestException("Project name can't be empty.");
 
-        ProjectEntity foundProject = getProjectOrThrow(projectId);
+        ProjectEntity foundProject = getProjectOrThrowException(projectId);
 
         projectRepository.findByName(name)
                 .filter(anotherProject -> !Objects.equals(anotherProject.getId(), projectId))
@@ -95,7 +95,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     public AckDto deleteProject(Long projectId) {
 
-        getProjectOrThrow(projectId);
+        getProjectOrThrowException(projectId);
 
         projectRepository.deleteById(projectId);
 
@@ -111,7 +111,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new BadRequestException("Project name can't be empty."));
 
         ProjectEntity project = optionalProjectId
-                .map(this::getProjectOrThrow)
+                .map(this::getProjectOrThrowException)
                 .orElse(ProjectEntity.builder().build());
 
         if (isCreate) {

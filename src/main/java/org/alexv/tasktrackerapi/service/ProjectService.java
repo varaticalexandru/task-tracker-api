@@ -19,5 +19,5 @@ public interface ProjectService {
 
     ProjectDto createOrUpdateProject(Optional<Long> optionalProjectId, Optional<String> optionalName);
 
-    ProjectEntity getProjectOrThrow(Long projectId);
+    ProjectEntity getProjectOrThrowException(Long projectId);
 }

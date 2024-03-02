@@ -32,7 +32,7 @@ public class TaskStateServiceImpl implements TaskStateService {
     @Override
     public TaskStatesDto fetchTaskStates(Optional<String> searchTerm, Long projectId) {
 
-        projectService.getProjectOrThrow(projectId);
+        projectService.getProjectOrThrowException(projectId);
 
         searchTerm = searchTerm.filter(name -> !name.trim().isEmpty());
 
@@ -57,7 +57,7 @@ public class TaskStateServiceImpl implements TaskStateService {
         if (name.trim().isEmpty())
             throw new BadRequestException("Project name can't be empty.");
 
-        ProjectEntity existingProject = projectService.getProjectOrThrow(projectId);
+        ProjectEntity existingProject = projectService.getProjectOrThrowException(projectId);
 
         existingProject.getTaskStates()
                 .stream()
@@ -88,5 +88,37 @@ public class TaskStateServiceImpl implements TaskStateService {
         final TaskStateEntity savedTaskState = taskStateRepository.saveAndFlush(newTaskState);
 
         return taskStateMapper.mapTo(savedTaskState);
+    }
+
+    @Override
+    public TaskStateDto updateTaskState(Long taskStateId, String name) {
+
+        if (name.trim().isEmpty())
+            throw new BadRequestException("Project name can't be empty.");
+
+        TaskStateEntity existingTaskState = getTaskStateOrThrowException(taskStateId);
+
+        ProjectEntity project = existingTaskState.getProject();
+
+        project.getTaskStates()
+                .stream()
+                .filter(anotherTaskState -> anotherTaskState.getName().equalsIgnoreCase(name) && !anotherTaskState.getId().equals(taskStateId))
+                .findAny()
+                .ifPresent(it -> {
+                    throw new BadRequestException(String.format("Task state \"%s\" already exists.", name));
+                });
+
+        existingTaskState.setName(name);
+
+        TaskStateEntity savedTaskState = taskStateRepository.saveAndFlush(existingTaskState);
+
+        return taskStateMapper.mapTo(savedTaskState);
+    }
+
+    @Override
+    public TaskStateEntity getTaskStateOrThrowException(Long taskStateId) {
+        return taskStateRepository.findById(taskStateId)
+                .orElseThrow(() -> new BadRequestException(String.format("Task State with id \"%s\" doesn't exist.", taskStateId)));
+
     }
 }
