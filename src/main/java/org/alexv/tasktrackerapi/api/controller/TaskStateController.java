@@ -22,7 +22,7 @@ public class TaskStateController {
     public static final String CREATE_TASK_STATE = "/api/projects/{project_id}/task_states";
     public static final String UPDATE_TASK_STATE = "/api/task_states/{task_state_id}";
     public static final String FETCH_TASK_STATES = "/api/projects/{project_id}/task_states";
-    public static final String CHANGE_TASK_STATE_POSITION = "api/task_states/{task_state_id}";
+    public static final String CHANGE_TASK_STATE_POSITION = "api/task_states/{task_state_id}/position/change";
     public static final String DELETE_TASK_STATE = "/api/projects/{project_id}/task_states/{task_state_id}";
 
     @GetMapping(FETCH_TASK_STATES)
