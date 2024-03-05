@@ -12,6 +12,8 @@ public interface TaskStateRepository extends JpaRepository<TaskStateEntity, Long
     Optional<TaskStateEntity> findByName(String name);
     Stream<TaskStateEntity> streamAllByProjectIdIs(Long projectId);
     Stream<TaskStateEntity> streamAllByNameIsContainingIgnoreCaseAndProjectIdIs(String name, Long projectId);
+    Stream<TaskStateEntity> streamAllBy();
     Optional<TaskStateEntity> findTaskStateEntityByRightTaskStateIsNullAndProjectIdAndIdIsNot(Long projectId, Long notTaskStateId);
+    Optional<TaskStateEntity> findTaskStateEntityByLeftTaskStateIsNullAndProjectId(Long projectId);
     Optional<TaskStateEntity> findTaskStateEntityByNameIgnoreCaseAndProjectIdAndIdIsNot(String name, Long projectId, Long notTaskStateId);
 }

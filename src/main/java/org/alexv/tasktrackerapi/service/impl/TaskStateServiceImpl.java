@@ -16,6 +16,7 @@ import org.alexv.tasktrackerapi.service.TaskStateService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -36,9 +37,7 @@ public class TaskStateServiceImpl implements TaskStateService {
 
         searchTerm = searchTerm.filter(name -> !name.trim().isEmpty());
 
-        Stream<TaskStateEntity> taskStateStream;
-
-        taskStateStream = searchTerm
+        Stream<TaskStateEntity> taskStateStream = searchTerm
                 .map(s -> taskStateRepository.streamAllByNameIsContainingIgnoreCaseAndProjectIdIs(s, projectId))
                 .orElseGet(() -> taskStateRepository.streamAllByProjectIdIs(projectId));
 
@@ -119,7 +118,15 @@ public class TaskStateServiceImpl implements TaskStateService {
     @Override
     public TaskStateDto changeTaskStatePosition(Long taskStateId, Optional<Long> leftTaskStateId) {
 
-        TaskStateEntity moveableTaskState = getTaskStateOrThrowException(taskStateId);
+        // TODO: refactor/split in sub-functions
+
+        leftTaskStateId
+                .filter(leftId -> Objects.equals(leftId, taskStateId))
+                .ifPresent(leftId -> {
+                    throw new BadRequestException("Left and current task states must be different.");
+                });
+
+        TaskStateEntity currentTaskState = getTaskStateOrThrowException(taskStateId);
 
         Optional<TaskStateEntity> leftTaskState = leftTaskStateId
                 .map(this::getTaskStateOrThrowException);
@@ -127,13 +134,62 @@ public class TaskStateServiceImpl implements TaskStateService {
         boolean setFirst = leftTaskState.isEmpty();
 
         leftTaskState
-                .filter(left -> !areTaskStatesInSameProject(left, moveableTaskState))
+                .filter(left -> !areTaskStatesInSameProject(left, currentTaskState))
                 .ifPresent(left -> {
-                    throw new BadRequestException(String.format("Task States with ids: \"%s\" and \"%s\" are in different projects.", taskStateId, left.getId()));
+                    throw new BadRequestException(String.format("Task states with ids: \"%s\" and \"%s\" are in different projects.", taskStateId, leftTaskState.get().getId()));
                 });
 
-        // TODO: finish
-        return TaskStateDto.builder().build();
+
+        Optional<TaskStateEntity> currentsLeft = currentTaskState.getLeftTaskState();
+        Optional<TaskStateEntity> currentsRight = currentTaskState.getRightTaskState();
+
+        if (currentsRight.isEmpty())
+            currentsLeft.get().setRightTaskState(null);
+        else
+            currentsLeft.ifPresent(movsL -> movsL.setRightTaskState(currentsRight.get()));
+
+        if (currentsLeft.isEmpty())
+            currentsRight.get().setLeftTaskState(null);
+        else
+            currentsRight.ifPresent(movsR -> movsR.setLeftTaskState(currentsLeft.get()));
+
+
+        if (setFirst) {
+            TaskStateEntity first = taskStateRepository.findTaskStateEntityByLeftTaskStateIsNullAndProjectId(currentTaskState.getProject().getId())
+                    .orElseThrow(() -> new BadRequestException(String.format("No task states present in project with id \"%s\" yet.", currentTaskState.getProject().getId())));
+
+            first.setLeftTaskState(currentTaskState);
+            currentTaskState.setRightTaskState(first);
+            currentTaskState.setLeftTaskState(null);
+
+            taskStateRepository.saveAndFlush(
+                    first
+            );
+
+
+        } else {
+            currentTaskState.setLeftTaskState(leftTaskState.get());
+
+            leftTaskState.get().getRightTaskState()
+                    .ifPresentOrElse(currentTaskState::setRightTaskState, () -> currentTaskState.setRightTaskState(null));
+
+            leftTaskState.get().setRightTaskState(currentTaskState);
+
+            taskStateRepository.saveAndFlush(
+                    leftTaskState.get()
+            );
+
+        }
+
+        currentsLeft.ifPresent(taskStateRepository::saveAndFlush);
+        currentsRight.ifPresent(taskStateRepository::saveAndFlush);
+
+        TaskStateEntity saved = taskStateRepository.saveAndFlush(
+                currentTaskState
+        );
+
+
+        return taskStateMapper.mapTo(saved);
     }
 
 

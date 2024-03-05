@@ -27,7 +27,7 @@ public class TaskStateController {
 
     @GetMapping(FETCH_TASK_STATES)
     public ResponseEntity<TaskStatesDto> fetchTaskStates(
-            @PathVariable("project_id") Long projectId,
+            @PathVariable(value = "project_id") Long projectId,
             @RequestParam(value = "search_term", required = false) Optional<String> searchTerm
     ) {
 
